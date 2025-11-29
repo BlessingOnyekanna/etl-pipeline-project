@@ -1,0 +1,22 @@
+# ETL Pipeline - Python Dependencies
+# Install with: pip install -r requirements.txt
+
+# Core Data Processing
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Database Connectors
+psycopg2-binary>=2.9.0  # PostgreSQL
+mysql-connector-python>=8.0.0  # MySQL
+
+# API and HTTP Requests
+requests>=2.31.0
+
+# Configuration Management
+PyYAML>=6.0
+
+# Data Validation
+jsonschema>=4.17.0
+
+# Date/Time Handling
+python-dateutil>=2.8.2

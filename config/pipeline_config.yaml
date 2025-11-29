@@ -1,0 +1,144 @@
+# ETL Pipeline Configuration File
+# This file controls all pipeline behavior - modify settings here instead of code
+
+# Pipeline Metadata
+pipeline:
+  name: "Retail Analytics ETL Pipeline"
+  version: "1.0.0"
+  description: "Multi-source data integration for retail analytics"
+  environment: "development"  # development, staging, production
+
+# Data Sources Configuration
+sources:
+  # CSV File Source
+  csv:
+    enabled: true
+    file_path: "Data-cleaning-portfolio/data/raw/ecommerce_orders_messy.csv"
+    delimiter: ","
+    encoding: "utf-8"
+    
+  # REST API Source (Example: Fake Store API)
+  api:
+    enabled: true
+    base_url: "https://fakestoreapi.com"
+    endpoints:
+      products: "/products"
+      users: "/users"
+    timeout: 30
+    retry_attempts: 3
+    
+  # MySQL Database Source
+  mysql:
+    enabled: false
+    host: "localhost"
+    port: 3306
+    database: "inventory_db"
+    user: "etl_user"
+    password: "your_password_here"  # Change this!
+    table: "inventory"
+    
+  # PostgreSQL Database Source
+  postgresql:
+    enabled: false
+    host: "localhost"
+    port: 5432
+    database: "customers_db"
+    user: "etl_user"
+    password: "your_password_here"  # Change this!
+    table: "customers"
+
+# Transform Configuration
+transform:
+  # Data Quality Rules
+  quality_checks:
+    remove_duplicates: true
+    handle_missing_values: true
+    detect_outliers: true
+    validate_data_types: true
+    
+  # Missing Value Strategy
+  missing_values:
+    numeric_strategy: "mean"  # mean, median, zero, drop
+    categorical_strategy: "mode"  # mode, unknown, drop
+    threshold: 0.5  # Drop column if >50% missing
+    
+  # Outlier Detection
+  outliers:
+    method: "iqr"  # iqr, zscore
+    threshold: 1.5  # For IQR method
+    action: "cap"  # cap, remove, flag
+    
+  # Data Type Conversions
+  type_conversions:
+    auto_detect: true
+    date_format: "%Y-%m-%d"
+
+# Load Configuration
+destinations:
+  # PostgreSQL Analytics Database
+  postgresql_analytics:
+    enabled: false
+    host: "localhost"
+    port: 5432
+    database: "analytics_db"
+    user: "etl_user"
+    password: "your_password_here"
+    schema: "public"
+    table: "sales_analytics"
+    if_exists: "replace"  # replace, append, fail
+    create_table: true
+    
+  # MySQL Backup Database
+  mysql_backup:
+    enabled: false
+    host: "localhost"
+    port: 3306
+    database: "backup_db"
+    user: "etl_user"
+    password: "your_password_here"
+    table: "sales_backup"
+    if_exists: "append"
+    create_table: true
+    
+  # CSV Export
+  csv_export:
+    enabled: true
+    output_path: "data/processed/sales_analytics.csv"
+    include_index: false
+    
+  # Cloud Storage Simulation
+  cloud_storage:
+    enabled: true
+    base_path: "data/cloud_storage"
+    partition_by: "date"
+
+# Logging Configuration
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  log_to_file: true
+  log_file: "logs/pipeline.log"
+  log_to_console: true
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  max_file_size_mb: 10
+  backup_count: 5
+
+# Error Handling
+error_handling:
+  retry_enabled: true
+  max_retries: 3
+  retry_delay_seconds: 5
+  continue_on_error: false
+
+# Performance Settings
+performance:
+  batch_size: 1000
+  parallel_processing: false
+  max_workers: 4
+
+# Data Quality Reporting
+reporting:
+  enabled: true
+  output_path: "reports/data_quality_report.txt"
+  include_statistics: true
+  include_samples: true
+  sample_size: 5
